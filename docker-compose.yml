@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    image: webdevops/php-nginx:8.2
+    container_name: eval2026
+    restart: unless-stopped
+    ports:
+      - "3026:80"                # เปิดเว็บผ่าน http://localhost:3026
+    environment:
+      TZ: Asia/Bangkok           # ตั้งค่า timezone
+      WEB_DOCUMENT_ROOT: /var/www/html/src/frontend  # root folder
+      PHP_DATE_TIMEZONE: Asia/Bangkok
+      PHP_DISPLAY_ERRORS: 1        # เปิด error display
+      PHP_DISPLAY_STARTUP_ERRORS: 1
+      PHP_ERROR_REPORTING: E_ALL   # แสดงทุก error/warning
+    volumes:
+      - ./src:/var/www/html/src
+      - ./vendor:/var/www/html/vendor
+#     networks:
+#       - shared-net
+
+# networks:
+#   shared-net:
+#     external: true

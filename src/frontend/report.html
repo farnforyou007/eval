@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายงานสรุปผลความพึงพอใจ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container my-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title mb-4">รายงานสรุปผลความพึงพอใจ</h2>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped align-middle text-center">
+            <thead class="table-primary">
+              <tr>
+                <th style="width: 40%">หัวข้อประเมิน</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>ค่าเฉลี่ย</th>
+                <th>SD</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🔹 Formatter ตัวเลขให้สวย (ทศนิยม 2 ตำแหน่ง)
+    const numFormat = new Intl.NumberFormat("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // 🔹 คำถาม + หมวดหมู่ (โครงสร้างใหม่)
+    const questions = [{"id":1,"text":"โดยภาพรวมท่านพึงพอใจกับรายวิชานี้","topic":"ประเมินอาจารย์ผู้ประสานงานรายวิชา","order":1},{"id":2,"text":"ความรู้ที่ได้รับจากการเรียนวิชานี้เป็นไปตามคาดหวังของผู้เรียน","topic":"ประเมินอาจารย์ผู้ประสานงานรายวิชา","order":13},{"id":3,"text":"สามารถสื่อสารในการทำงานได้อย่างมีประสิทธิภาพ และเลือกใช้รูปแบบการสื่อสารข้อมูล การนำเสนอได้อย่างเหมาะสม","topic":"การทวนสอบผลการเรียนรู้","order":20}];
+
+    // 🔹 ข้อมูลตัวอย่าง (ผู้ตอบ 10 คน × 10 ข้อ)
+    const rawData = [[3,2,1],[4,4,4],[2,3,4],[5,4,4],[4,2,1]];
+
+    // 🔹 ฟังก์ชันคำนวณสถิติ
+    function calculateStats(values) {
+      const frequencies = [0, 0, 0, 0, 0];
+      values.forEach(v => { frequencies[v - 1]++; });
+
+      const meanRaw = values.reduce((a, b) => a + b, 0) / values.length;
+      const variance = values.reduce((a, b) => a + Math.pow(b - meanRaw, 2), 0) / values.length;
+      const sdRaw = Math.sqrt(variance);
+
+      return {
+        frequencies,
+        mean: numFormat.format(meanRaw),
+        sd: numFormat.format(sdRaw)
+      };
+    }
+
+    // 🔹 แปลง rawData ให้เป็น column (แต่ละคำถาม)
+    const cols = Array(questions.length).fill().map((_, colIndex) =>
+      rawData.map(row => row[colIndex])
+    );
+
+    // 🔹 Group คำถามตาม topic
+    const grouped = {};
+    questions.forEach((q, idx) => {
+      if (!grouped[q.topic]) grouped[q.topic] = [];
+      grouped[q.topic].push({ ...q, values: cols[idx] });
+    });
+
+    // 🔹 สร้างตาราง
+    const tbody = document.getElementById("reportTableBody");
+    let allValues = [];
+    Object.entries(grouped).forEach(([topic, items]) => {
+      // แถวหัวข้อ topic
+      const trTopic = document.createElement("tr");
+      trTopic.classList.add("table-secondary");
+      trTopic.innerHTML = `<td colspan="8" class="fw-bold text-start">${topic}</td>`;
+      tbody.appendChild(trTopic);
+
+      // เรียงตาม order
+      items.sort((a, b) => a.order - b.order);
+
+      // รายละเอียดคำถามใน topic นั้น
+      let topicValues = [];
+      items.forEach((q) => {
+        const stats = calculateStats(q.values);
+        topicValues = topicValues.concat(q.values);
+        allValues = allValues.concat(q.values);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="text-start">${q.id}. ${q.text}</td>
+          ${stats.frequencies.map(f => `<td>${f}</td>`).join("")}
+          <td><b>${stats.mean}</b></td>
+          <td>${stats.sd}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // สรุปผลรวมของ topic
+      const summaryStats = calculateStats(topicValues);
+      const trSummary = document.createElement("tr");
+      trSummary.classList.add("table-info");
+      trSummary.innerHTML = `
+        <td class="text-start fw-bold">สรุปผลรวม: ${topic}</td>
+        ${summaryStats.frequencies.map(f => `<td>${f}</td>`).join("")}
+        <td><b>${summaryStats.mean}</b></td>
+        <td>${summaryStats.sd}</td>
+      `;
+      tbody.appendChild(trSummary);
+    });
+
+    // 🔹 สรุปผลรวมทุกหัวข้อ
+    const overallStats = calculateStats(allValues);
+    const trOverall = document.createElement("tr");
+    trOverall.classList.add("table-success");
+    trOverall.innerHTML = `
+      <td class="text-start fw-bold">สรุปผลรวมทุกหัวข้อ</td>
+      ${overallStats.frequencies.map(f => `<td>${f}</td>`).join("")}
+      <td><b>${overallStats.mean}</b></td>
+      <td>${overallStats.sd}</td>
+    `;
+    tbody.appendChild(trOverall);
+  </script>
+</body>
+</html>
