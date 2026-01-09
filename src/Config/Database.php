@@ -20,10 +20,10 @@ class Database {
     // }
 
     public function __construct() {
-        $this->host = '10.135.172.137';
+        $this->host = 'db';
         $this->db   = 'eval';
         $this->user = 'root';
-        $this->pass = '454244012';
+        $this->pass = 'rootpassword';
         $this->connect();
     }
 

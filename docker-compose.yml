@@ -1,3 +1,30 @@
+# version: '3.8'
+
+# services:
+#   app:
+#     image: webdevops/php-nginx:8.2
+#     container_name: eval2026
+#     restart: unless-stopped
+#     ports:
+#       - "3026:80"                # เปิดเว็บผ่าน http://localhost:3026
+#     environment:
+#       TZ: Asia/Bangkok           # ตั้งค่า timezone
+#       WEB_DOCUMENT_ROOT: /var/www/html/src/frontend  # root folder
+#       PHP_DATE_TIMEZONE: Asia/Bangkok
+#       PHP_DISPLAY_ERRORS: 1        # เปิด error display
+#       PHP_DISPLAY_STARTUP_ERRORS: 1
+#       PHP_ERROR_REPORTING: E_ALL   # แสดงทุก error/warning
+#     volumes:
+#       - ./src:/var/www/html/src
+#       - ./vendor:/var/www/html/vendor
+# #     networks:
+# #       - shared-net
+
+# # networks:
+# #   shared-net:
+# #     external: true
+
+
 version: '3.8'
 
 services:
@@ -6,20 +33,44 @@ services:
     container_name: eval2026
     restart: unless-stopped
     ports:
-      - "3026:80"                # เปิดเว็บผ่าน http://localhost:3026
+      - "3026:80"
     environment:
-      TZ: Asia/Bangkok           # ตั้งค่า timezone
-      WEB_DOCUMENT_ROOT: /var/www/html/src/frontend  # root folder
+      TZ: Asia/Bangkok
+      WEB_DOCUMENT_ROOT: /var/www/html/src/frontend
       PHP_DATE_TIMEZONE: Asia/Bangkok
-      PHP_DISPLAY_ERRORS: 1        # เปิด error display
+      PHP_DISPLAY_ERRORS: 1
       PHP_DISPLAY_STARTUP_ERRORS: 1
-      PHP_ERROR_REPORTING: E_ALL   # แสดงทุก error/warning
+      PHP_ERROR_REPORTING: E_ALL
     volumes:
       - ./src:/var/www/html/src
       - ./vendor:/var/www/html/vendor
-#     networks:
-#       - shared-net
+    depends_on:
+      - db
 
-# networks:
-#   shared-net:
-#     external: true
+  # --- ส่วนที่ต้องเพิ่มเข้าไป ---
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # ตั้งรหัสผ่าน root ตรงนี้
+      MYSQL_DATABASE: eval       # ชื่อฐานข้อมูลเริ่มต้น
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pma_docker
+    restart: always
+    ports:
+      - "8081:80"                      # เปิดเข้าผ่าน http://localhost:8081
+    environment:
+      - PMA_HOST=db                    # ให้ pma ชี้ไปที่ service ชื่อ db
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db
+
+volumes:
+  db_data:
