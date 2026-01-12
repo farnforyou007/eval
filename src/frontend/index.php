@@ -1,9 +1,14 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+use App\Models\Forms;
 use App\Models\Subjects;
 
-$subjectsModel = new Subjects();
+$subjectsModel = new \App\Models\Subjects();
+$questionsModel = new \App\Models\Questions();
+$formsModel = new \App\Models\Forms(); // เพิ่มบรรทัดนี้
+
+
 
 session_start();
 
@@ -69,14 +74,17 @@ switch ($page) {
         break;
     case 'edit_questions':
         $subjectId = $_GET['subid'] ?? null;
-        $questionsModel = new \App\Models\Questions();
-        $subjectsModel = new \App\Models\Subjects();
+        // $questionsModel = new \App\Models\Questions();
+        // $subjectsModel = new \App\Models\Subjects();
+        // $formsModel = new \App\Models\Forms(); // เพิ่มบรรทัดนี้
 
         $params = [
             'siteName' => 'จัดการคำถามแบบประเมิน',
             'page'     => 'edit_questions.php',
             'subject'  => $subjectsModel->getBySubjectId($subjectId), // ดึงชื่อวิชา
-            'questions' => $questionsModel->getBySubjectId($subjectId) // ดึงคำถาม
+            'questions' => $questionsModel->getBySubjectId($subjectId), // ดึงคำถาม
+            'versions' => $formsModel->getVersionsBySubjectId($subjectId)
+
         ];
         break;
     default:

@@ -53,7 +53,7 @@
 <div class="container mt-5">
     <div class="row mb-5 align-items-center">
         <div class="col-md-6">
-            <h2 class="fw-bold" style="color: #4E342E;">จัดการรายวิชา</h2>
+            <h2 class="fw-bold" style="color: #4E342E;">จัดการแบบประเมินรายวิชา</h2>
             <p style="color: #8D6E63;">เลือกรายวิชาที่ต้องการตรวจสอบหรือแก้ไขข้อมูล</p>
         </div>
         <div class="col-md-6">
