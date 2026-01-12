@@ -1,24 +1,29 @@
 <?php
+
 namespace App\Models;
 
 use App\Config\Database;
 use PDO;
 
-class Forms {
+class Forms
+{
     private $conn;
     private $table = "forms";
 
-    public function __construct() {
+    public function __construct()
+    {
         $db = new Database();
         $this->conn = $db->conn;
     }
 
-    public function getAll() {
+    public function getAll()
+    {
         $stmt = $this->conn->query("SELECT * FROM {$this->table}");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getBySubjectId($subject_id) {
+    public function getBySubjectId($subject_id)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM {$this->table} WHERE subject_id = :id and in_used = 1");
         $stmt->execute(['id' => $subject_id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -34,8 +39,10 @@ class Forms {
             'created_at' => date('Y-m-d H:i:s')
         ]);
     }
+ 
 
-    public function update($id, $data) {
+    public function update($id, $data)
+    {
         $stmt = $this->conn->prepare("UPDATE {$this->table} SET name = :name, email = :email WHERE id = :id");
         return $stmt->execute([
             'id' => $id,
@@ -44,7 +51,8 @@ class Forms {
         ]);
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
