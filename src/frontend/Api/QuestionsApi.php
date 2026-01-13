@@ -160,9 +160,14 @@ switch ($method) {
         // รับค่าหมายเหตุที่ส่งมาจาก SweetAlert/FormData
         $note = $input['save_note'] ?? '';
 
-        if (!$subject_id || empty($q_texts)) {
+        // if (!$subject_id || empty($q_texts)) {
+        //     http_response_code(400);
+        //     echo json_encode(['success' => false, 'message' => 'ข้อมูลไม่ครบถ้วน']);
+        //     exit;
+        // }
+        if (!$subject_id) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'ข้อมูลไม่ครบถ้วน']);
+            echo json_encode(['success' => false, 'message' => 'ไม่พบรหัสวิชา']);
             exit;
         }
 
