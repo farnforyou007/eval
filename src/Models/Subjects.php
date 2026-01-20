@@ -18,11 +18,11 @@ class Subjects
 
     public function getAll()
     {
-         $stmt = $this->conn->query("SELECT * FROM subjects ORDER BY id");
+        $stmt = $this->conn->query("SELECT * FROM subjects ORDER BY id");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    
+
     public function getBySubjectId($subjectId)
     {
         $stmt = $this->conn->prepare("SELECT * FROM subjects WHERE subject_id = :id");
@@ -30,5 +30,16 @@ class Subjects
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    
+    public function updateStatus($id, $status)
+    {
+        // ตรวจสอบความถูกต้องของสถานะก่อนบันทึก
+        $status = ($status === 'Y') ? 'Y' : 'N';
+
+        $sql = "UPDATE subjects SET is_active = :status WHERE subject_id = :id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':status' => $status,
+            ':id' => $id
+        ]);
+    }
 }

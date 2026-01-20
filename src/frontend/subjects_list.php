@@ -125,10 +125,22 @@
     }
 
     .container-wide {
-        max-width: 1400px;
+        max-width: 100%;
+        width: 100%;
         /* ขยายให้กว้างกว่า container ปกติ */
         margin: 0 auto;
         padding: 0 2rem;
+    }
+
+    .table-container {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        overflow: hidden !important;
+        /* เปลี่ยนจาก visible เป็น hidden เพื่อไม่ให้ขอบตารางทะลุ */
+        position: relative;
+        max-width: 100%;
     }
 
     /* ปรับแต่ง Tooltip เพิ่มเติม */
@@ -318,15 +330,96 @@
     .pe-4 {
         padding-right: 1.5rem !important;
     }
+
+    .custom-switch {
+        width: 2.6rem !important;
+        height: 1.35rem !important;
+        cursor: pointer;
+        border: none !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e") !important;
+        transition: background-color 0.25s ease-in-out, transform 0.1s !important;
+    }
+
+    /* สถานะ "ปิด" (สีแดง) */
+    .custom-switch {
+        background-color: #ef4444 !important;
+        /* Red 500 */
+        opacity: 0.8;
+    }
+
+    /* สถานะ "เปิด" (สีเขียว) */
+    .custom-switch:checked {
+        background-color: #22c55e !important;
+        /* Green 500 */
+        opacity: 1;
+    }
+
+    .custom-switch:active {
+        transform: scale(0.95);
+    }
+
+    .custom-switch:focus {
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    /* คุมการเลื่อนของตาราง */
+    .table-responsive-custom {
+        width: 100%;
+        overflow-x: auto;
+        /* ให้เลื่อนแนวนอนได้ถ้าข้อมูลล้น */
+        -webkit-overflow-scrolling: touch;
+        /* ให้การเลื่อนใน iPhone/iPad ลื่นไหล */
+    }
+
+    /* ในหน้าจอคอมพิวเตอร์ (ขนาดใหญ่กว่า 992px) */
+    @media (min-width: 992px) {
+        .table-responsive-custom {
+            overflow-x: visible;
+            /* ในคอมไม่ต้องมี Scrollbar ถ้าไม่จำเป็น */
+        }
+
+        .modern-table {
+            table-layout: auto;
+            /* ให้ตารางขยายเต็มพื้นที่ที่มี */
+            width: 100%;
+        }
+    }
+
+    /* ในหน้าจอมือถือ (ขนาดเล็กกว่า 768px) */
+    @media (max-width: 767.98px) {
+        .table-responsive-custom {
+            margin: 0 -1rem;
+            /* ขยายตารางให้เกือบชิดขอบจอเพื่อเพิ่มพื้นที่ */
+            padding: 0 1rem;
+        }
+
+        /* บังคับให้รหัสวิชาอยู่บรรทัดเดียวและตัวเล็กลงตามที่คุยกันก่อนหน้า */
+        .code-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            white-space: nowrap;
+        }
+
+        /* ซ่อนคอลัมน์ที่ไม่จำเป็นมากในมือถือเพื่อลดการเลื่อนข้างเยอะๆ */
+        .d-mobile-none {
+            display: none !important;
+        }
+    }
 </style>
 
-<div class="container mt-4 mb-5">
+<!-- <div class="container mt-4 mb-5">
     <div class="row align-items-end mb-3">
         <div class="col-lg-8">
             <h2 class="fw-bold mb-1" style="color: #1e293b; letter-spacing: -0.5px;">จัดการแบบประเมินรายวิชา</h2>
             <p class="text-secondary mb-0 fs-6">จัดการเนื้อหาคำถามและตรวจสอบสถานะรายวิชาทั้งหมดในระบบ</p>
         </div>
-        <div class="col-lg-4 text-lg-end d-none d-lg-block">
+    </div> -->
+<div class="container mt-4 mb-5">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h2 class="fw-bold mb-1" style="color: #1e293b; letter-spacing: -0.5px;">จัดการแบบประเมินรายวิชา</h2>
+            <p class="text-secondary mb-0 fs-6">จัดการเนื้อหาคำถามและตรวจสอบสถานะรายวิชาทั้งหมดในระบบ</p>
         </div>
     </div>
 
@@ -335,10 +428,10 @@
             <div class="d-inline-flex gap-1 bg-white border p-1 rounded-4 shadow-sm" style="min-height: 48px;">
                 <button class="btn btn-sm px-4 rounded-pill filter-btn active" data-filter="all">ทั้งหมด</button>
                 <button class="btn btn-sm px-4 rounded-pill filter-btn" data-filter="active">
-                    <span class="status-dot status-active me-1"></span> เปิดใช้งาน
+                    <span class="status-dot status-active me-1"></span> เปิดสอน
                 </button>
                 <button class="btn btn-sm px-4 rounded-pill filter-btn" data-filter="inactive">
-                    <span class="status-dot status-inactive me-1"></span> ปิดใช้งาน
+                    <span class="status-dot status-inactive me-1"></span> ไม่เปิดสอน
                 </button>
             </div>
         </div>
@@ -361,8 +454,8 @@
 
             <div class="d-flex align-items-center gap-2">
                 <span class="text-muted small">แสดง</span>
-                <select id="itemsPerPageSelect" class="form-select form-select-sm shadow-sm" 
-                style="width: 70px; border-radius: 8px; border-color: #e2e8f0;">
+                <select id="itemsPerPageSelect" class="form-select form-select-sm shadow-sm"
+                    style="width: 70px; border-radius: 8px; border-color: #e2e8f0;">
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
@@ -373,48 +466,62 @@
 
         </div>
 
-        <div class="table-responsive">
-            <table class="table modern-table" id="subjectTable">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;" class="text-center">ลำดับ</th>
-                        <th style="width: 15%;" class="text-start">รหัสวิชา</th>
-                        <th style="width: 43%;" class="text-start">ชื่อวิชา</th>
-                        <th style="width: 22%;" class="text-start">Subject ID</th>
-                        <th style="width: 15%;" class="text-end pe-4">จัดการ</th>
-                    </tr>
-                </thead>
-                <tbody id="subjectGrid">
-                    <?php if (!empty($subjects)): $index = 1; ?>
-                        <?php foreach ($subjects as $row):
-                            $isActive = $row['is_active'] ?? 'Y';
-                            $statusText = ($isActive === 'Y') ? 'active' : 'inactive';
-                        ?>
-                            <tr class="subject-item" data-status="<?= $statusText ?>">
-                                <td class="text-center text-muted small row-index"></td>
-                                <td><span class="code-badge border-0"><?= htmlspecialchars($row['code']) ?></span></td>
-                                <td class="text-start">
-                                    <div class="fw-bold text-dark"><?= htmlspecialchars($row['thainame']) ?></div>
-                                    <div class="text-muted small">
-                                        <span class="status-dot <?= $isActive === 'Y' ? 'status-active' : 'status-inactive' ?>"></span>
-                                        <?= htmlspecialchars($row['englishname']) ?>
-                                    </div>
-                                </td>
-                                <td class="text-start">
-                                    <span class="text-muted fw-light subject-badge"><?= htmlspecialchars($row['subject_id']) ?></span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"
-                                        class="btn-edit-modern shadow-sm custom-tooltip"
-                                        data-tooltip="แก้ไขแบบประเมิน">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+        <div class="table-container shadow-sm mt-2">
+            <div class="table-responsive-custom">
+                <table class="table modern-table" id="subjectTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;" class="text-center">ลำดับ</th>
+                            <th style="width: 15%;" class="text-start">รหัสวิชา</th>
+                            <th style="width: 43%;" class="text-start">ชื่อรายวิชา / สถานะ</th>
+                            <th style="width: 22%;" class="text-start">Subject ID</th>
+                            <th style="width: 15%;" class="text-end pe-4">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subjectGrid">
+                        <?php if (!empty($subjects)): $index = 1; ?>
+                            <?php foreach ($subjects as $row):
+                                $isActive = $row['is_active'] ?? 'Y';
+                                $statusText = ($isActive === 'Y') ? 'active' : 'inactive';
+                            ?>
+                                <tr class="subject-item" data-status="<?= $statusText ?>">
+                                    <td class="text-center text-muted small row-index"></td>
+                                    <td><span class="code-badge border-0"><?= htmlspecialchars($row['code']) ?></span></td>
+                                    <td class="text-start">
+                                        <div class="fw-bold text-dark"><?= htmlspecialchars($row['thainame']) ?></div>
+                                        <div class="text-muted small">
+                                            <span class="status-dot <?= $isActive === 'Y' ? 'status-active' : 'status-inactive' ?>"></span>
+                                            <?= htmlspecialchars($row['englishname']) ?>
+                                        </div>
+                                    </td>
+                                    <td class="text-start">
+                                        <span class="text-muted fw-light subject-badge"><?= htmlspecialchars($row['subject_id']) ?></span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex align-items-center justify-content-end gap-3">
+                                            <div class="form-check form-switch m-0 p-0">
+                                                <input class="form-check-input status-toggle-input m-0 custom-switch"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    id="status_<?= $row['subject_id'] ?>"
+                                                    data-id="<?= $row['subject_id'] ?>"
+                                                    <?= ($row['is_active'] === 'Y') ? 'checked' : '' ?>
+                                                    title="<?= ($row['is_active'] === 'Y') ? 'เปิดใช้งาน' : 'ปิดใช้งาน' ?>">
+                                            </div>
+
+                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"
+                                                class="btn-edit-modern shadow-sm custom-tooltip"
+                                                data-tooltip="แก้ไขแบบประเมิน">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="d-flex justify-content-center py-4 border-top bg-light bg-opacity-10">
@@ -432,32 +539,7 @@
 </div>
 </div>
 
-<!-- <script>
-    // ระบบค้นหาอัตโนมัติ (Auto-filter) พร้อมแสดงข้อความเมื่อไม่พบข้อมูล
-    document.getElementById('subjectSearch').addEventListener('input', function() {
-        let filter = this.value.toLowerCase().trim();
-        let items = document.querySelectorAll('.subject-item');
-        let hasVisible = false;
 
-        items.forEach(item => {
-            let text = item.innerText.toLowerCase();
-            if (text.includes(filter)) {
-                item.style.display = "";
-                hasVisible = true;
-            } else {
-                item.style.display = "none";
-            }
-        });
-
-        // ตรวจสอบเพื่อแสดง/ซ่อนข้อความ "ไม่พบข้อมูล"
-        const noResult = document.getElementById('noResult');
-        if (!hasVisible && filter !== "") {
-            noResult.classList.remove('d-none');
-        } else {
-            noResult.classList.add('d-none');
-        }
-    });
-</script> -->
 
 <script>
     document.getElementById('subjectSearch').addEventListener('input', function() {
@@ -527,6 +609,7 @@
 
         document.getElementById('totalItems').innerText = filteredItems.length;
         renderPaginationControls();
+
     }
 
     // ฟังก์ชันเปลี่ยนจำนวนแถว
@@ -588,4 +671,78 @@
     });
     searchInput.addEventListener('input', applyFilter);
     applyFilter();
+</script>
+
+<script>
+    document.querySelectorAll('.status-toggle-input').forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const subjectId = this.dataset.id;
+            const isChecked = this.checked;
+            const newStatus = isChecked ? 'Y' : 'N';
+
+            // หาแถว (tr) ที่ปุ่มนี้สังกัดอยู่ เพื่อไปเปลี่ยนสีจุดในแถวนั้น
+            const row = this.closest('tr');
+            const statusDot = row.querySelector('.status-dot');
+
+            // แสดงสถานะกำลังโหลด (Feedback)
+            this.style.opacity = '0.5';
+
+            fetch('Api/SubjectsApi.php?action=update_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: subjectId,
+                        status: newStatus
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = this.closest('tr');
+                        const statusDot = row.querySelector('.status-dot');
+                        if (statusDot) {
+                            if (newStatus === 'Y') {
+                                statusDot.classList.remove('status-inactive');
+                                statusDot.classList.add('status-active');
+                            } else {
+                                statusDot.classList.remove('status-active');
+                                statusDot.classList.add('status-inactive');
+                            }
+                        }
+                        const statusText = (newStatus === 'Y') ? 'active' : 'inactive';
+                        row.setAttribute('data-status', statusText);
+
+                        // --- 3. รันฟังก์ชัน Filter ใหม่เพื่อให้แถวหายไป/ปรากฏตามหมวดหมู่ที่เลือก ---
+                        // ให้เรียกชื่อฟังก์ชันที่คุณใช้กรองข้อมูล (เช่น filterSubjects หรือ applyFilters)
+                        if (typeof applyFilters === 'function') {
+                            applyFilters();
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: isChecked ? 'เปิดใช้งานแล้ว' : 'ปิดใช้งานแล้ว',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        this.checked = !isChecked; // คืนค่าปุ่มถ้า Error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ผิดพลาด',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(err => {
+                    this.checked = !isChecked;
+                    console.error('Error:', err);
+                })
+                .finally(() => {
+                    this.style.opacity = '1';
+                });
+        });
+    });
 </script>

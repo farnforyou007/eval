@@ -207,6 +207,48 @@
         opacity: 1;
         visibility: visible;
     }
+
+    /* สไตล์ Badge สถานะ */
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .status-active {
+        background-color: #22c55e;
+    }
+
+    .status-inactive {
+        background-color: #ef4444;
+    }
+
+    .btn-back-hover {
+        transition: all 0.2s ease;
+        /* ทำให้การเปลี่ยนสีดูนุ่มนวล */
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .btn-back-hover:hover {
+        color: #334155 !important;
+        /* เปลี่ยนเป็นสีเข้ม (Slate 700) เมื่อชี้ */
+        background-color: #f1f5f9;
+        /* เพิ่มพื้นหลังจางๆ */
+        transform: translateX(-3px);
+        /* ขยับไปทางซ้ายนิดๆ ให้ความรู้สึกเหมือน "ย้อนกลับ" */
+    }
+
+    .btn-back-hover i {
+        transition: transform 0.2s ease;
+    }
+
+    /* แถม: ให้ไอคอนขยับแรงกว่าตัวอักษรนิดนึงเพื่อให้ดูมีลูกเล่น */
+    .btn-back-hover:hover i {
+        transform: scale(1.1);
+    }
 </style>
 
 <div class="edit-header-section shadow-sm">
@@ -220,11 +262,18 @@
                 <div class="subject-subtitle d-flex align-items-center gap-2">
                     <span class="badge bg-light text-secondary border fw-normal">ID: <?= htmlspecialchars($subject['subject_id']) ?></span>
                     <span class="text-muted">|</span>
+                    <?php
+                    $isActive = $subject['is_active'] ?? 'Y';
+                    $statusClass = ($isActive === 'Y') ? 'status-active' : 'status-inactive';
+                    ?>
+                    <span class="status-dot <?= $statusClass ?>"></span>
                     <span class="fst-italic"><?= htmlspecialchars($subject['englishname']) ?></span>
                 </div>
             </div>
-            <a href="subjects" class="btn btn-link text-decoration-none text-muted">
-                <i class="bi bi-x-lg me-1"></i> ปิดหน้าต่าง
+            <a href="subjects" class="text-decoration-none text-muted d-inline-flex align-items-center gap-2 btn-back-hover">
+                <!-- <i class="bi bi-x-lg me-1"></i> ปิดหน้าต่าง -->
+                <i class="bi bi-arrow-left-circle-fill" style="font-size: 24px;"></i>
+                <span style="line-height: 1;">ย้อนกลับ</span>
             </a>
 
         </div>
@@ -316,8 +365,6 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
-
-
 
                 <div class="floating-save-bar d-flex justify-content-between align-items-center">
                     <div class="text-muted small d-none d-md-block me-4">
@@ -412,8 +459,6 @@
         </div>
     </div>
 </div>
-
-
 
 <script>
     function initQuestionSortable(el) {
@@ -568,58 +613,7 @@
             });
         }
     });
-    // ปรับปรุงส่วนบันทึกคำถามทั้งหมด
-    // document.getElementById('sortableForm').addEventListener('submit', function(e) {
-    //     e.preventDefault();
-
-    //     Swal.fire({
-    //         title: 'ยืนยันการบันทึกเวอร์ชั่นใหม่',
-    //         html: `
-    //         <div class="text-center mb-2 ">ระบุหมายเหตุการบันทึก :</div>
-    //         <input type="text" id="save_note" class="swal2-input mt-0" placeholder="ตัวอย่าง: เทอม 2/2568">
-    //     `,
-    //         icon: 'question',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#334155',
-    //         confirmButtonText: 'บันทึกข้อมูล',
-    //         cancelButtonText: 'ยกเลิก',
-    //         preConfirm: () => {
-    //             const note = document.getElementById('save_note').value;
-    //             // ไม่บังคับกรอกก็ได้ แต่ส่งค่าไป
-    //             return note;
-    //         }
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             const note = result.value; // ดึงค่าหมายเหตุจาก SweetAlert
-
-    //             Swal.fire({
-    //                 title: 'กำลังบันทึกข้อมูล...',
-    //                 didOpen: () => {
-    //                     Swal.showLoading();
-    //                 },
-    //                 allowOutsideClick: false
-    //             });
-
-    //             const formData = new FormData(this);
-    //             formData.append('save_note', note); // เพิ่มหมายเหตุลงใน FormData ก่อนส่ง
-
-    //             fetch('Api/QuestionsApi.php', {
-    //                     method: 'POST',
-    //                     body: formData
-    //                 })
-    //                 .then(res => res.json())
-    //                 .then(data => {
-    //                     if (data.success) {
-    //                         Swal.fire('สำเร็จ!', data.message, 'success')
-    //                             .then(() => {
-    //                                 location.reload();
-    //                             });
-    //                     }
-    //                 });
-    //         }
-    //     });
-    // });
-
+    // ส่วนบันทึกข้อมูล
     document.getElementById('sortableForm').addEventListener('submit', function(e) {
         e.preventDefault();
 

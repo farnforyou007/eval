@@ -31,7 +31,8 @@
         .top-navbar {
             background-color: #ffffff;
             border-bottom: 1px solid #dee2e6;
-            height: 48px;
+            /* height: 48px; */
+            min-height: 48px;
             display: flex;
             align-items: center;
         }
@@ -333,13 +334,28 @@
             color: #6c757d;
             font-size: 0.8rem;
         }
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                padding: 1rem 0;
+            }
+
+            .nav-item {
+                padding: 0.25rem 0;
+            }
+        }
+
+        body {
+            overflow-x: hidden;
+            /* ป้องกันการเลื่อนซ้ายขวาที่เกิดจาก element ล้น */
+        }
     </style>
 </head>
 
 <body>
 
     <!-- 1. แถบเมนูหลักด้านบนสุด -->
-    <nav class="navbar top-navbar navbar-expand">
+    <!-- <nav class="navbar top-navbar navbar-expand-lg">
         <div class="container-fluid px-3">
             <span class="navbar-brand">
                 <i class="bi bi-clipboard-data" style="font-size: 1.25rem; color: #875a7b;"></i>
@@ -360,12 +376,17 @@
                             Admin
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="subjects">จัดการรายวิชา</a></li>
+                            
+                            <li>
+                                <a class="dropdown-item" href="subjects">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    จัดการแบบประเมินรายวิชา
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 <?php endif; ?>
-                <!-- <li class="nav-item"><a class="nav-link" href="#">Learning</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Reporting</a></li> -->
+              
             </ul>
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item dropdown">
@@ -373,12 +394,54 @@
                         <span class="bi bi-person-circle"> <?php if (isset($userdata)) echo $userdata['display_name_th']; ?> </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <!-- <li><a class="dropdown-item" href="#">My Profile</a></li>
-                        <li><hr class="dropdown-divider"></li> -->
+                       
                         <li><a class="dropdown-item" href="/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                     </ul>
                 </li>
             </ul>
+        </div>
+    </nav> -->
+<main >
+    <nav class="navbar top-navbar navbar-expand-lg">
+        <div class="container-fluid px-3">
+            <span class="navbar-brand">
+                <i class="bi bi-clipboard-data" style="font-size: 1.25rem; color: #875a7b;"></i>
+                ระบบประเมินรายวิชา
+            </span>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="topNavbarContent"> <?php $is_admin = array('niti.c'); ?>
+                <ul class="navbar-nav me-auto">
+                    <?php if (isset($userdata) && in_array($userdata['username'], $is_admin)): ?>
+                        <li class="nav-item"><a class="nav-link active" href="home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="employees">Employees</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
+                            <ul class="dropdown-menu border-0 shadow-sm">
+                                <li>
+                                    <a class="dropdown-item" href="subjects">
+                                        <i class="bi bi-file-earmark-text me-2"></i>จัดการแบบประเมินรายวิชา
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <span class="bi bi-person-circle"> <?php if (isset($userdata)) echo $userdata['display_name_th']; ?> </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
+                            <li><a class="dropdown-item" href="/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -395,7 +458,7 @@
 
     include($page);
     ?>
-
+</main>
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

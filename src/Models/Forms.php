@@ -114,8 +114,7 @@ class Forms
             return false;
         }
     }
-
-    // เพิ่มในไฟล์ src/Models/Forms.php
+    
     public function getById($id)
     {
         $stmt = $this->conn->prepare("SELECT form_questions FROM {$this->table} WHERE id = :id");
