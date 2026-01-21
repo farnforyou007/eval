@@ -18,7 +18,7 @@ class Subjects
 
     public function getAll()
     {
-        $stmt = $this->conn->query("SELECT * FROM subjects ORDER BY id");
+        $stmt = $this->conn->query("SELECT * FROM subjects ORDER BY code ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

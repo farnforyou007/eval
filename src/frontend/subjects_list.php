@@ -194,7 +194,8 @@ function getStudyLevelBadge($level)
                                             </div>
 
 
-                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"  
+                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"
+
                                                 class="btn-edit-modern shadow-sm custom-tooltip"
                                                 data-tooltip="แก้ไขแบบประเมิน">
 
@@ -280,20 +281,20 @@ function getStudyLevelBadge($level)
     const subjectItems = Array.from(document.querySelectorAll('.subject-item'));
     const itemsPerPageSelect = document.getElementById('itemsPerPageSelect');
     const urlParams = new URLSearchParams(window.location.search);
-    const pageFromUrl = parseInt(urlParams.get('p'));
-    let currentPage = pageFromUrl || 1;
+
+    let currentPage = parseInt(urlParams.get('p')) || 1;
     let rowsPerPage = 10; // หรือตามที่คุณตั้งค่าไว้
     // let currentPage = 1;
-    let itemsPerPage = parseInt(itemsPerPageSelect.value); 
-    let filteredItems = [];
-
+    let itemsPerPage = parseInt(itemsPerPageSelect.value);
+    // let filteredItems = [];
+    let filteredItems = [...subjectItems];
     let currentFilter = 'all';
 
     const levelFilter = document.getElementById('levelFilter');
 
     function applyFilter() {
         const searchText = searchInput.value.toLowerCase().trim();
-        const selectedLevel = levelFilter.value; 
+        const selectedLevel = levelFilter.value;
 
         filteredItems = subjectItems.filter(item => {
             const itemStatus = item.getAttribute('data-status');
@@ -311,7 +312,17 @@ function getStudyLevelBadge($level)
             return matchesSearch && matchesStatus && matchesLevel;
         });
 
-        currentPage = 1;
+        // currentPage = 1;
+        // renderTable();
+
+        if (searchText !== "" || selectedLevel !== "all" || currentFilter !== "all") {
+            currentPage = 1;
+        } else {
+            // ดึงจาก URL อีกครั้งเพื่อความชัวร์ตอนโหลดครั้งแรก
+            const urlP = new URLSearchParams(window.location.search).get('p');
+            currentPage = parseInt(urlP) || currentPage;
+        }
+
         renderTable();
     }
 
@@ -326,24 +337,60 @@ function getStudyLevelBadge($level)
         }, '', newUrl);
     }
 
+    // function renderTable() {
+    //     const start = (currentPage - 1) * itemsPerPage;
+    //     const end = start + itemsPerPage;
+    //     const editLink = `edit_questions?subid=${item.subject_id}&p=${currentPage}`;
+    //     subjectItems.forEach(item => item.style.display = 'none');
+    //     const pageItems = filteredItems.slice(start, end);
+    //     pageItems.forEach((item, index) => {
+    //         item.style.display = '';
+    //         // คำนวณลำดับที่ถูกต้อง: (หน้าปัจจุบัน-1) * จำนวนต่อหน้า + (ลำดับในหน้านั้น+1)
+    //         const globalIndex = start + index + 1;
+    //         item.querySelector('.row-index').innerText = globalIndex;
+    //     });
+
+    //     document.getElementById('totalItems').innerText = filteredItems.length;
+
+    //     renderPaginationControls();
+    //     updateUrlPage(currentPage);
+
+    // }
+
     function renderTable() {
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
 
         subjectItems.forEach(item => item.style.display = 'none');
         const pageItems = filteredItems.slice(start, end);
-        pageItems.forEach((item, index) => {
-            item.style.display = '';
-            // คำนวณลำดับที่ถูกต้อง: (หน้าปัจจุบัน-1) * จำนวนต่อหน้า + (ลำดับในหน้านั้น+1)
-            const globalIndex = start + index + 1;
-            item.querySelector('.row-index').innerText = globalIndex;
-        });
 
+        // ถ้ามีข้อมูลให้แสดงผล
+        if (pageItems.length > 0) {
+            document.getElementById('noResultContainer').classList.add('d-none');
+            pageItems.forEach((item, index) => {
+                item.style.display = '';
+
+                // อัปเดต Link ปุ่มแก้ไขให้จำหน้า p
+                const editBtn = item.querySelector('a[href*="edit_questions"]');
+                if (editBtn) {
+                    let currentHref = editBtn.getAttribute('href');
+                    let baseUrl = currentHref.split('&p=')[0];
+                    editBtn.setAttribute('href', `${baseUrl}&p=${currentPage}`);
+                }
+
+                const globalIndex = start + index + 1;
+                const rowIndexEl = item.querySelector('.row-index');
+                if (rowIndexEl) rowIndexEl.innerText = globalIndex;
+            });
+        } else {
+            document.getElementById('noResultContainer').classList.remove('d-none');
+        }
+
+        // อัปเดตตัวเลขจำนวนวิชาทั้งหมดที่กรองได้
         document.getElementById('totalItems').innerText = filteredItems.length;
 
         renderPaginationControls();
-        updateUrlPage(currentPage);
-
+        updateUrlPage(currentPage); // บรรทัดนี้จะทำให้ URL จำหน้า p
     }
 
     // ฟังก์ชันเปลี่ยนจำนวนแถว
@@ -394,7 +441,6 @@ function getStudyLevelBadge($level)
         });
     }
 
-    // Event Listeners อื่นๆ คงเดิม
     filterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             filterBtns.forEach(b => b.classList.remove('active'));
@@ -656,8 +702,8 @@ function getStudyLevelBadge($level)
                                         ${item.study_level || '-'}
                                     </span>`;
                 })()
-        } </td>     
-         </tr>
+        } < /td>      < /
+        tr >
             `).join('')}
                     </tbody>
                 </table>

@@ -3,14 +3,32 @@
 <head>
     <link rel="stylesheet" href="edit_questions.css">
 </head>
+<?php
+// แก้ไขส่วนดึงข้อมูล Subject
+$subjectsModel = new \App\Models\Subjects();
+
+$subject_id = $_GET['subid'] ?? '';
+$backPage = $_GET['p'] ?? 1; // รับเลขหน้าไว้
+
+$subject = $subjectsModel->getBySubjectId($subject_id);
+
+// กัน Error บรรทัด 11-13 ถ้าหา subject ไม่เจอ
+if (!$subject) {
+    $subject = ['code' => 'N/A', 'thainame' => 'ไม่พบข้อมูล', 'subject_id' => $subject_id, 'englishname' => ''];
+}
+?>
 
 <div class="edit-header-section shadow-sm">
     <div class="container ">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h3 class="subject-title mb-1">
+                <!-- <h3 class="subject-title mb-1">
                     <span class="text-primary me-2"><?= htmlspecialchars($subject['code']) ?></span>
                     <?= htmlspecialchars($subject['thainame']) ?>
+                </h3> -->
+                <h3 class="subject-title mb-1">
+                    <span class="text-primary me-2"><?= htmlspecialchars($subject['code'] ?? '') ?></span>
+                    <?= htmlspecialchars($subject['thainame'] ?? '') ?>
                 </h3>
                 <div class="subject-subtitle d-flex align-items-center gap-2">
                     <span class="badge bg-light text-secondary border fw-normal">ID: <?= htmlspecialchars($subject['subject_id']) ?></span>
@@ -24,12 +42,19 @@
                 </div>
             </div>
 
-            <a href="subjects" class="text-decoration-none text-muted d-inline-flex align-items-center gap-2 btn-back-hover">
-               
+            <!-- <a href="subjects" class="text-decoration-none text-muted d-inline-flex align-items-center gap-2 btn-back-hover">
                 <i class="bi bi-arrow-left-circle-fill" style="font-size: 24px;"></i>
                 <span style="line-height: 1;">ย้อนกลับ</span>
-            </a> 
-           
+            </a> -->
+
+            <?php $backPage = $_GET['p'] ?? 1; ?>
+            <div class="col-auto">
+                <a href="subjects?p=<?= htmlspecialchars($backPage) ?>" class="text-decoration-none text-muted d-inline-flex align-items-center gap-2 btn-back-hover">
+                    <i class="bi bi-arrow-left-circle-fill" style="font-size: 24px;"></i>
+                    <span style="line-height: 1;">ย้อนกลับ</span>
+                </a>
+            </div>
+
         </div>
     </div>
 
