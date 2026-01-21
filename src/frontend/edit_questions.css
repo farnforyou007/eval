@@ -1,0 +1,250 @@
+
+    body {
+        background-color: #f8fafc;
+    }
+
+    /* Header Style: Clean & Professional */
+    .edit-header-section {
+        background: #ffffff;
+        padding: 2rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 1.5rem;
+    }
+
+    .subject-title {
+        color: #1e293b;
+        font-weight: 700;
+    }
+
+    .subject-subtitle {
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+
+    /* Question Cards: Modern White */
+    .topic-group {
+        background-color: #ffffff;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .topic-header {
+        background-color: #334155;
+        /* Slate 700 */
+        color: #f8fafc;
+        padding: 1rem 1.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+
+    .question-item {
+        background: #ffffff;
+        margin: 0.75rem 1.5rem;
+        padding: 1.1rem;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+
+    .question-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transform: translateY(-1px);
+    }
+
+    /* Floating Save Bar: Glassmorphism */
+    .floating-save-bar {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 0.8rem 2.5rem;
+        border-radius: 100px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        min-width: 350px;
+    }
+
+    /* Form Elements */
+    .drag-handle {
+        cursor: grab;
+        margin-right: 1rem;
+        color: #94a3b8;
+        font-size: 1.2rem;
+    }
+
+    .q-order-label {
+        color: #64748b;
+        font-size: 0.85rem;
+        background: #f1f5f9;
+        padding: 4px 10px;
+        border-radius: 6px;
+        margin-right: 1rem;
+        /* ปรับจาก 65px เป็น 80px หรือใส่ nowrap */
+        min-width: 80px;
+        text-align: center;
+        white-space: nowrap;
+        /* เพิ่มบรรทัดนี้เพื่อป้องกันการขึ้นบรรทัดใหม่ */
+    }
+
+    .q-input {
+        border: none;
+        background: transparent;
+        font-size: 1rem;
+        color: #334155;
+        width: 100%;
+    }
+
+    .q-input:focus {
+        outline: none;
+        border-bottom: 1px solid #94a3b8;
+    }
+
+    .btn-remove-q {
+        color: #94a3b8;
+        border: none;
+        background: none;
+        transition: color 0.2s;
+    }
+
+    .btn-remove-q:hover {
+        color: #ef4444;
+    }
+
+    /* ทำให้เป้าหมายที่กำลังลากดูโปร่งแสงขึ้น */
+    .ghost-class {
+        opacity: 0.4;
+        background: #e2e8f0 !important;
+        border: 2px dashed #cbd5e1 !important;
+    }
+
+    /* เพิ่มในส่วน <style> ของ edit_questions.php */
+    .topic-group {
+        background: #ffffff;
+        border-radius: 16px;
+        /* ขอบมนมากขึ้นให้ดูทันสมัย */
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .topic-header {
+        background: #334155;
+        /* Slate 700 */
+        padding: 1.25rem 1.5rem;
+        color: white;
+    }
+
+    .question-item {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        padding: 12px 16px;
+        transition: all 0.2s ease;
+    }
+
+    .question-item:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ป้องกันการคลุมข้อความขณะลาก */
+    /* ป้องกันการไฮไลต์ข้อความขณะลาก ซึ่งเป็นสาเหตุที่ทำให้ลากติดขัด */
+    .question-item {
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: default;
+    }
+
+    /* ทำให้ Handle ดูเด่นขึ้นเมื่อเอาเมาส์ไปชี้ */
+    .drag-handle:hover {
+        color: #334155;
+        cursor: grab;
+    }
+
+    .drag-handle:active {
+        cursor: grabbing;
+    }
+
+    /* เพิ่มในส่วน <style> */
+    .custom-tooltip {
+        position: relative;
+    }
+
+    .custom-tooltip::after {
+        content: attr(data-tooltip);
+        /* ดึงข้อความจาก Attribute มาแสดง */
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #334155;
+        /* สี Slate 700 ตามธีมของคุณ */
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s;
+    }
+
+    .custom-tooltip:hover::after {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* สไตล์ Badge สถานะ */
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .status-active {
+        background-color: #22c55e;
+    }
+
+    .status-inactive {
+        background-color: #ef4444;
+    }
+
+    .btn-back-hover {
+        transition: all 0.2s ease;
+        /* ทำให้การเปลี่ยนสีดูนุ่มนวล */
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .btn-back-hover:hover {
+        color: #334155 !important;
+        /* เปลี่ยนเป็นสีเข้ม (Slate 700) เมื่อชี้ */
+        background-color: #f1f5f9;
+        /* เพิ่มพื้นหลังจางๆ */
+        transform: translateX(-3px);
+        /* ขยับไปทางซ้ายนิดๆ ให้ความรู้สึกเหมือน "ย้อนกลับ" */
+    }
+
+    .btn-back-hover i {
+        transition: transform 0.2s ease;
+    }
+
+    /* แถม: ให้ไอคอนขยับแรงกว่าตัวอักษรนิดนึงเพื่อให้ดูมีลูกเล่น */
+    .btn-back-hover:hover i {
+        transform: scale(1.1);
+    }
+

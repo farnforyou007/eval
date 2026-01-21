@@ -42,4 +42,40 @@ class Subjects
             ':id' => $id
         ]);
     }
+    public function add($data)
+    {
+        $sql = "INSERT INTO subjects (subject_id, code, thainame, englishname,study_level, is_active) 
+            VALUES (:subject_id, :code, :thainame, :englishname,:study_level, :is_active)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':subject_id'  => $data['subject_id'],
+            ':code'        => $data['code'],
+            ':thainame'    => $data['thainame'],
+            ':englishname' => $data['englishname'],
+            ':study_level' => $data['study_level'],
+            ':is_active'   => $data['is_active']
+        ]);
+    }
+
+    // ซฺิงค์ข้อมูลรายวิชาจาก API มหาลัย
+    public function syncFromApi($data)
+    {
+        // เตรียม SQL (อย่าลืมเพิ่มคอลัมน์ study_level ใน DB)
+        $sql = "INSERT IGNORE INTO subjects (subject_id, code, thainame, englishname, study_level, is_active) 
+            VALUES (:subject_id, :code, :thainame, :englishname, :study_level, 'Y')";
+        $stmt = $this->conn->prepare($sql);
+        $count = 0;
+
+        foreach ($data as $item) {
+            $result = $stmt->execute([
+                ':subject_id'  => $item['subject_id'],  // ชื่อ Key ต้องตรงกับที่ Map ไว้ข้างบน
+                ':code'        => $item['code'],
+                ':thainame'    => $item['thainame'],
+                ':englishname' => $item['englishname'],
+                ':study_level' => $item['study_level']
+            ]);
+            if ($result && $stmt->rowCount() > 0) $count++;
+        }
+        return $count;
+    }
 }
