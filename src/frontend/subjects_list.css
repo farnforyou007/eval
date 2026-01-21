@@ -488,10 +488,71 @@
     box-shadow: 0 0 0 4px rgba(51, 65, 85, 0.1) !important;
     border-color: #334155 !important;
 }
+
 /* ใส่ในส่วน <style> ของหน้า subjects_list.php */
 .swal2-actions {
-    margin-top: 1.5rem !important; /* เพิ่มระยะห่างจากฟอร์มด้านบน */
+    margin-top: 1.5rem !important;
+    /* เพิ่มระยะห่างจากฟอร์มด้านบน */
 }
+
 .swal2-confirm {
-    margin-left: 10px !important; /* เพิ่มระยะห่างด้านซ้ายของปุ่มยืนยัน */
+    margin-left: 10px !important;
+    /* เพิ่มระยะห่างด้านซ้ายของปุ่มยืนยัน */
+}
+
+/* สไตล์ปุ่มลบแบบโมเดิร์น */
+.btn-delete-modern {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #ef4444;
+    /* สีแดงเข้ม */
+    border: 1px solid #fee2e2;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-delete-modern:hover {
+    background-color: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+}
+
+.btn-delete-modern:active {
+    transform: translateY(0);
+}
+
+
+.btn-edit-subject-modern {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #fee2e2;
+
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-edit-subject-modern:hover {
+    background-color: #ef9a44;
+    color: #ffffff;
+    border-color: #dedede;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+
+}
+
+.btn-delete-modern:active {
+    transform: translateY(0);
 }

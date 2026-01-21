@@ -3,6 +3,7 @@
 <head>
     <link rel="stylesheet" href="edit_questions.css">
 </head>
+
 <div class="edit-header-section shadow-sm">
     <div class="container ">
         <div class="d-flex justify-content-between align-items-center">
@@ -22,12 +23,13 @@
                     <span class="fst-italic"><?= htmlspecialchars($subject['englishname']) ?></span>
                 </div>
             </div>
+
             <a href="subjects" class="text-decoration-none text-muted d-inline-flex align-items-center gap-2 btn-back-hover">
-                <!-- <i class="bi bi-x-lg me-1"></i> ปิดหน้าต่าง -->
+               
                 <i class="bi bi-arrow-left-circle-fill" style="font-size: 24px;"></i>
                 <span style="line-height: 1;">ย้อนกลับ</span>
-            </a>
-
+            </a> 
+           
         </div>
     </div>
 

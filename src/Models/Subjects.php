@@ -78,4 +78,44 @@ class Subjects
         }
         return $count;
     }
+
+    public function update($data)
+    {
+        $sql = "UPDATE subjects SET 
+                code = :code, 
+                thainame = :thainame, 
+                englishname = :englishname, 
+                study_level = :study_level 
+            WHERE subject_id = :subject_id";
+
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':subject_id'  => $data['subject_id'],
+            ':code'        => $data['code'],
+            ':thainame'    => $data['thainame'],
+            ':englishname' => $data['englishname'],
+            ':study_level' => $data['study_level']
+        ]);
+    }
+
+    public function hasAnswers($id)
+    {
+        $sql = "SELECT COUNT(*) FROM answers WHERE subject_id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function deleteRelatedAnswers($id)
+    {
+        $sql = "DELETE FROM answers WHERE subject_id = :id";
+        return $this->conn->prepare($sql)->execute([':id' => $id]);
+    }
+
+    public function delete($id)
+    {
+        $sql = "DELETE FROM subjects WHERE subject_id = :id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
 }

@@ -54,20 +54,6 @@ switch ($method) {
             exit;
         }
 
-        // if ($action === 'add_subject') {
-        //     // คุณอาจเพิ่ม Logic ตรวจสอบว่า subject_id ซ้ำหรือไม่ก่อนบันทึก
-        //     // $result = $subjectsModel->add($input);
-        //     // echo json_encode(['success' => $result, 'message' => $result ? 'เพิ่มรายวิชาสำเร็จ' : 'เพิ่มรายวิชาล้มเหลว']);
-        //     // exit;
-        //     header('Content-Type: application/json'); // บังคับให้เป็น JSON
-        //     $result = $subjectsModel->add($input);
-        //     echo json_encode([
-        //         'success' => $result,
-        //         'message' => $result ? 'เพิ่มรายวิชาสำเร็จ' : 'เพิ่มรายวิชาล้มเหลว'
-        //     ]);
-        //     exit;
-        // }
-
         if ($action === 'add_subject') {
             header('Content-Type: application/json');
 
@@ -172,6 +158,13 @@ switch ($method) {
             exit;
         }
 
+        if ($action === 'update_subject') {
+            header('Content-Type: application/json');
+            $result = $subjectsModel->update($input); // เรียกฟังก์ชัน update
+            echo json_encode(['success' => $result, 'message' => $result ? 'แก้ไขสำเร็จ' : 'แก้ไขล้มเหลว']);
+            exit;
+        }
+
         // 3. กรณีเป็น POST อื่นๆ ที่ยังไม่ได้ทำระบบรองรับ
         http_response_code(501); // Not Implemented
         echo json_encode(['success' => false, 'message' => 'Action not implemented']);
@@ -187,14 +180,53 @@ switch ($method) {
         echo json_encode($result);
         break;
 
+    // case 'DELETE':
+    //     if (!$id) {
+    //         http_response_code(400);
+    //         echo json_encode(['success' => false, 'message' => 'ไม่พบรหัสรายวิชาที่ต้องการลบ']);
+    //         exit;
+    //     }
+
+    //     // เปลี่ยนจาก $api->deleteAnswer เป็นการเรียก Model ของรายวิชา
+    //     try {
+    //         $result = $subjectsModel->delete($id);
+    //         echo json_encode([
+    //             'success' => $result,
+    //             'message' => $result ? 'ลบรายวิชาสำเร็จ' : 'ไม่สามารถลบรายวิชาได้'
+    //         ]);
+    //     } catch (Exception $e) {
+    //         echo json_encode([
+    //             'success' => false,
+    //             'message' => 'เกิดข้อผิดพลาด: ' . $e->getMessage()
+    //         ]);
+    //     }
+    //     break;
+
     case 'DELETE':
-        if (!$id) {
-            http_response_code(400);
-            echo json_encode(['status' => false, 'message' => 'Missing id']);
-            exit;
+        $force = isset($_GET['force']) && $_GET['force'] === 'true';
+
+        try {
+            // 1. ถ้ายังไม่ได้กดยืนยันรอบสอง (force) ให้เช็คก่อนว่ามีคำตอบค้างไหม
+            if (!$force && $subjectsModel->hasAnswers($id)) {
+                echo json_encode([
+                    'success' => false,
+                    'has_data' => true,
+                    'message' => 'รายวิชานี้มีข้อมูลการประเมินอยู่ในระบบ'
+                ]);
+                exit;
+            }
+
+            // 2. ไม่ว่าจะลบปกติ หรือกดยืนยันรอบสอง (force) 
+            // สั่งลบเฉพาะในตาราง subjects เท่านั้น (ไม่แตะต้องตาราง answers)
+            $result = $subjectsModel->delete($id);
+
+            echo json_encode([
+                'success' => $result,
+                'message' => 'ลบรายวิชาสำเร็จ (ข้อมูลการประเมินเดิมจะยังคงค้างอยู่ในฐานข้อมูล)'
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-        $result = $api->deleteAnswer($id);
-        echo json_encode($result);
         break;
 
     default:

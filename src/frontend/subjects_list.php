@@ -1,6 +1,5 @@
-<head>
-    <link rel="stylesheet" href="subjects_list.css">
-</head>
+<link rel="stylesheet" href="subjects_list.css">
+
 <?php
 $subjectsModel = new \App\Models\Subjects();
 
@@ -39,6 +38,7 @@ function getStudyLevelBadge($level)
     );
 }
 ?>
+
 <div class="container mt-4 mb-5">
 
     <div class="row align-items-center mb-3">
@@ -155,6 +155,32 @@ function getStudyLevelBadge($level)
                                         </div>
 
                                     </td>
+
+                                    <!-- <td class="text-end pe-4">
+                                        <div class="d-flex align-items-center justify-content-end gap-3">
+                                            <div class="form-check form-switch m-0 p-0">
+                                                <input class="form-check-input status-toggle-input m-0 custom-switch"
+
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    id="status_<?= $row['subject_id'] ?>"
+                                                    data-id="<?= $row['subject_id'] ?>"
+                                                    <?= ($row['is_active'] === 'Y') ? 'checked' : '' ?>
+                                                    title="<?= ($row['is_active'] === 'Y') ? 'ปิดใช้งาน' : 'เปิดใช้งาน' ?>">
+                                            </div>
+
+                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"
+                                                class="btn-edit-modern shadow-sm custom-tooltip"
+                                                data-tooltip="แก้ไขแบบประเมิน">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            <i class="bi bi-trash-fill"></i>
+                                        </div>
+
+
+                                    </td> -->
+
                                     <td class="text-end pe-4">
                                         <div class="d-flex align-items-center justify-content-end gap-3">
                                             <div class="form-check form-switch m-0 p-0">
@@ -167,11 +193,34 @@ function getStudyLevelBadge($level)
                                                     title="<?= ($row['is_active'] === 'Y') ? 'เปิดใช้งาน' : 'ปิดใช้งาน' ?>">
                                             </div>
 
-                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"
+
+                                            <a href="edit_questions?subid=<?= htmlspecialchars($row['subject_id']) ?>"  
                                                 class="btn-edit-modern shadow-sm custom-tooltip"
                                                 data-tooltip="แก้ไขแบบประเมิน">
-                                                <i class="bi bi-pencil-square"></i>
+
+                                                <i class="bi bi-journal-text"></i>
                                             </a>
+
+
+                                            <button type="button"
+                                                class="btn-edit-subject-modern shadow-sm custom-tooltip"
+                                                data-id="<?= htmlspecialchars($row['subject_id']) ?>"
+                                                data-code="<?= htmlspecialchars($row['code']) ?>"
+                                                data-thainame="<?= htmlspecialchars($row['thainame']) ?>"
+                                                data-englishname="<?= htmlspecialchars($row['englishname']) ?>"
+                                                data-level="<?= htmlspecialchars($row['study_level'] ?? '') ?>"
+                                                data-active="<?= $row['is_active'] ?>"
+                                                data-tooltip="แก้ไขรายวิชานี้"
+                                                onclick="handleEditSubject(this)"> <i class="bi bi-pencil-square"></i>
+                                            </button>
+
+                                            <button type="button"
+                                                class="btn-delete-modern shadow-sm custom-tooltip"
+                                                data-id="<?= htmlspecialchars($row['subject_id']) ?>"
+                                                data-tooltip="ลบรายวิชานี้"
+                                                onclick="confirmDelete('<?= htmlspecialchars($row['subject_id']) ?>')">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -230,17 +279,21 @@ function getStudyLevelBadge($level)
     const filterBtns = document.querySelectorAll('.filter-btn');
     const subjectItems = Array.from(document.querySelectorAll('.subject-item'));
     const itemsPerPageSelect = document.getElementById('itemsPerPageSelect');
-
-    let currentPage = 1;
-    let itemsPerPage = parseInt(itemsPerPageSelect.value); // ดึงค่าจาก Dropdown
+    const urlParams = new URLSearchParams(window.location.search);
+    const pageFromUrl = parseInt(urlParams.get('p'));
+    let currentPage = pageFromUrl || 1;
+    let rowsPerPage = 10; // หรือตามที่คุณตั้งค่าไว้
+    // let currentPage = 1;
+    let itemsPerPage = parseInt(itemsPerPageSelect.value); 
     let filteredItems = [];
+
     let currentFilter = 'all';
 
     const levelFilter = document.getElementById('levelFilter');
 
     function applyFilter() {
         const searchText = searchInput.value.toLowerCase().trim();
-        const selectedLevel = levelFilter.value; // ค่าจาก Dropdown ใหม่
+        const selectedLevel = levelFilter.value; 
 
         filteredItems = subjectItems.filter(item => {
             const itemStatus = item.getAttribute('data-status');
@@ -265,12 +318,19 @@ function getStudyLevelBadge($level)
     // ผูก Event ให้ทำงานเมื่อเปลี่ยนค่าใน Dropdown
     levelFilter.addEventListener('change', applyFilter);
 
+    function updateUrlPage(page) {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('p', page);
+        window.history.pushState({
+            page: page
+        }, '', newUrl);
+    }
+
     function renderTable() {
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
 
         subjectItems.forEach(item => item.style.display = 'none');
-
         const pageItems = filteredItems.slice(start, end);
         pageItems.forEach((item, index) => {
             item.style.display = '';
@@ -280,7 +340,9 @@ function getStudyLevelBadge($level)
         });
 
         document.getElementById('totalItems').innerText = filteredItems.length;
+
         renderPaginationControls();
+        updateUrlPage(currentPage);
 
     }
 
@@ -594,9 +656,8 @@ function getStudyLevelBadge($level)
                                         ${item.study_level || '-'}
                                     </span>`;
                 })()
-        } 
-                </td>   
-                </tr>
+        } </td>     
+         </tr>
             `).join('')}
                     </tbody>
                 </table>
@@ -653,6 +714,174 @@ function getStudyLevelBadge($level)
         if (result.success) {
             Swal.fire('สำเร็จ', `เพิ่มรายวิชาใหม่เรียบร้อยแล้ว (${result.added} วิชา)`, 'success')
                 .then(() => location.reload());
+        }
+    }
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'ยืนยันการลบรายวิชา?',
+            text: "ข้อมูลรายวิชาจะถูกลบถาวร!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444', // สีแดง
+            cancelButtonColor: '#f1f5f9',
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก',
+            customClass: {
+                cancelButton: 'text-dark border'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // ส่งคำขอไปที่ API เพื่อลบ
+                deleteSubject(id);
+            }
+        });
+    }
+
+    // async function deleteSubject(id) {
+    //     try {
+    //         const response = await fetch(`Api/SubjectsApi.php?action=delete&id=${id}`, {
+    //             method: 'DELETE'
+    //         });
+    //         const res = await response.json();
+
+    //         if (res.success) {
+    //             Swal.fire('ลบสำเร็จ!', 'รายวิชาถูกลบออกจากระบบแล้ว', 'success')
+    //                 .then(() => location.reload());
+    //         } else {
+    //             Swal.fire('ผิดพลาด', res.message || 'ไม่สามารถลบข้อมูลได้', 'error');
+    //         }
+    //     } catch (error) {
+    //         Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+    //     }
+    // }
+
+    async function deleteSubject(id, isForce = false) {
+        const url = `Api/SubjectsApi.php?action=delete&id=${id}${isForce ? '&force=true' : ''}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'DELETE'
+            });
+            const res = await response.json();
+
+            if (res.success) {
+                Swal.fire('สำเร็จ!', res.message, 'success').then(() => location.reload());
+            } else if (res.has_data) {
+                // --- กรณีพบข้อมูลใน answers: เตือนเพื่อให้กดยืนยันอีกครั้ง ---
+                Swal.fire({
+                    title: 'ยืนยันการลบ?',
+                    html: `
+        <div class="mt-2">
+            <p class="text-danger fw-medium mb-1">${res.message}</p>
+            <p class="text-secondary">คุณต้องการลบ "รายวิชา" นี้ออกใช่หรือไม่?</p>
+            <small class="text-muted">(ข้อมูลการประเมินที่เคยตอบไว้จะไม่ถูกลบ)</small>
+        </div>
+    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'ยืนยันการลบรายวิชา',
+                    cancelButtonText: 'ยกเลิก',
+                    customClass: {
+                        cancelButton: 'text-white border'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteSubject(id, true); // ส่ง force=true เพื่อไปรันคำสั่งลบ subject ใน PHP
+                    }
+                });
+            } else {
+                Swal.fire('ผิดพลาด', res.message, 'error');
+            }
+        } catch (error) {
+            Swal.fire('ผิดพลาด', 'การเชื่อมต่อล้มเหลว', 'error');
+        }
+    }
+
+    async function handleEditSubject(btn) {
+        // ดึงข้อมูลจาก Attribute ของปุ่มที่กด
+        const data = btn.dataset;
+
+        const {
+            value: formValues
+        } = await Swal.fire({
+            title: '<span class="fs-4 fw-bold">แก้ไขข้อมูลรายวิชา</span>',
+            html: `
+            <div class="container-fluid text-start mt-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1">Subject ID (แก้ไขไม่ได้)</label>
+                        <input id="edit-subjectid" class="form-control rounded-3 bg-light" value="${data.id}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small text-muted mb-1">รหัสวิชา (Code)</label>
+                        <input id="edit-code" class="form-control rounded-3" value="${data.code}">
+                    </div>
+                    <div class="col-12 mt-3">
+                        <label class="small text-muted mb-1">ชื่อรายวิชา (ภาษาไทย)</label>
+                        <input id="edit-thainame" class="form-control rounded-3" value="${data.thainame}">
+                    </div>
+                    <div class="col-12 mt-3">
+                        <label class="small text-muted mb-1">ชื่อรายวิชา (English Name)</label>
+                        <input id="edit-englishname" class="form-control rounded-3" value="${data.englishname}">
+                    </div>
+                    <div class="col-12 mt-3">
+                        <label class="small text-muted mb-1">ระดับการศึกษา</label>
+                        <select id="edit-studylevel" class="form-select rounded-3">
+                            <option value="ปริญญาตรี" ${data.level === 'ปริญญาตรี' ? 'selected' : ''}>ปริญญาตรี</option>
+                            <option value="ปริญญาโท" ${data.level === 'ปริญญาโท' ? 'selected' : ''}>ปริญญาโท</option>
+                            <option value="ปริญญาเอก" ${data.level === 'ปริญญาเอก' ? 'selected' : ''}>ปริญญาเอก</option>
+                            <option value="ประกาศนียบัตรบัณฑิต" ${data.level === 'ประกาศนียบัตรบัณฑิต' ? 'selected' : ''}>ประกาศนียบัตรบัณฑิต</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `,
+            width: '700px',
+            showCancelButton: true,
+            confirmButtonText: 'บันทึกการแก้ไข',
+            cancelButtonText: 'ยกเลิก',
+            customClass: {
+                actions: 'gap-3',
+                confirmButton: 'btn btn-dark px-4 py-2 rounded-3',
+                cancelButton: 'btn btn-light px-4 py-2 rounded-3 border'
+            },
+            buttonsStyling: false,
+            preConfirm: () => {
+                return {
+                    subject_id: document.getElementById('edit-subjectid').value,
+                    code: document.getElementById('edit-code').value,
+                    thainame: document.getElementById('edit-thainame').value,
+                    englishname: document.getElementById('edit-englishname').value,
+                    study_level: document.getElementById('edit-studylevel').value
+                }
+            }
+        });
+
+        if (formValues) {
+            // ส่งข้อมูลไปที่ API เพื่อ Update
+            updateSubject(formValues);
+        }
+    }
+
+    async function updateSubject(formData) {
+        try {
+            const response = await fetch('Api/SubjectsApi.php?action=update_subject', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const res = await response.json();
+            if (res.success) {
+                Swal.fire('สำเร็จ', 'แก้ไขข้อมูลเรียบร้อยแล้ว', 'success').then(() => location.reload());
+            } else {
+                Swal.fire('ล้มเหลว', res.message, 'error');
+            }
+        } catch (e) {
+            Swal.fire('Error', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
         }
     }
 </script>
